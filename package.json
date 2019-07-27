@@ -5,8 +5,12 @@
   "scripts": {
     "start": "react-native start",
     "test": "jest",
-    "lint": "eslint ."
+    "lint": "eslint .",
+    "lista": "emulator -list-avds",
+    "emulador1": "C:\\Users\\Marcio\\AppData\\Local\\Android\\Sdk\\emulator\\emulator  -avd Pixel_2_API_28",
+    "emulador2": "C:\\Users\\Marcio\\AppData\\Local\\Android\\Sdk\\emulator\\emulator  -avd Nexus_9_API_25"
   },
+
   "dependencies": {
     "react": "16.8.6",
     "react-native": "0.60.4",

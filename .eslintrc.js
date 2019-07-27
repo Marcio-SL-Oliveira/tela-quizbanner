@@ -32,6 +32,7 @@ module.exports = {
       { extensions: ['.jsx', '.js']
      }
     ],
+    'no-plusplus': 'off',
     'import/prefer-default-export': 'off',
     'react-native/no-raw-text': 'off',
     'react/no-array-index-key': 'off',

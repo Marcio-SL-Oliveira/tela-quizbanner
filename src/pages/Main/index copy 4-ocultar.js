@@ -24,7 +24,6 @@ import {
   FlatTestes,
   FlatTestesButton,
   FlatTestesItem,
-  ContainerApp1,
 } from './styles';
 
 import getQuestao from '../../questoes/tabuada/tab00';
@@ -65,14 +64,13 @@ export default function Main() {
    Define o Capítulo e Atividade Atual
    Verificar se é melhor salvar em disco e depois buscar em disco no formato JSON
   */
-  const [mostraLista, setMostraLista] = useState(false);
   const [listaCapitulos] = useState(getListaCapitulos);
   const [indexCapitulo, setIndexCapitulo] = useState(0);
   const [maximoCapitulos, setMaximoCapitulos] = useState(getQtdeCapitulos);
   const [txtCapitulo, setTxtCapitulo] = useState('Cap. 1');
   const [clickCapitulo, setClickCapitulo] = useState(false);
 
-  const [listaAtividades, setListaAtividades] = useState(getListaAtividades(0));
+  const [atividades, setAtividades] = useState(getListaAtividades);
   const [minhaAtividade, setMinhaAtividade] = useState(0);
   const [maxAtividade, setMaxAtividade] = useState(getQtdeAtividades);
   const [questoes, setQuestoes] = useState(getQuestao);
@@ -94,29 +92,16 @@ export default function Main() {
 
   function clicouCapitulo() {
     setClickCapitulo(!clickCapitulo);
-    setMostraLista(true);
     setNextView(true);
   }
-
-  function clicouListaCapitulos(novoCapitulo) {
-    setTxtCapitulo(`Cap. ${novoCapitulo + 1}`);
+  function clicouListaCapitulos(sequencia) {
+    setTxtCapitulo(`Cap. ${sequencia + 1}`);
     setClickCapitulo(false);
-    setMostraLista(false);
-    setListaAtividades(getListaAtividades(novoCapitulo));
   }
-
   function clicouAtividade() {
     setClickAtividade(!clickAtividade);
-    setMostraLista(true);
     setNextView(false);
   }
-
-  function clicouListaAtividades(novaAtividade) {
-    setTxtAtividade(`Ati. ${novaAtividade + 1}`);
-    setClickAtividade(false);
-    setMostraLista(false);
-  }
-
   function mudouCapitulo() {
     setClickCapitulo(!clickCapitulo);
     setNextView(true);
@@ -140,104 +125,99 @@ export default function Main() {
 
   return (
     <ContainerApp>
-      {!mostraLista && (
-        <ContainerApp1>
-          <ContainerAcertosErros>
-            {placar.map(value => (
-              <AcertosErrosOX key={value.id}>
-                <Text>
-                  {value.placarAE < 0
-                    ? ''
-                    : controler.acertoErro[value.placarAE]}
-                </Text>
-              </AcertosErrosOX>
-            ))}
-          </ContainerAcertosErros>
-
-          <ContainerMaosPlacarCapituloAtividade>
-            <ContainerMaos>
-              <LogoMaosPositivaNegativa source={iconPositivo} />
-              <LogoMaosPositivaNegativa source={iconNegativo} />
-            </ContainerMaos>
-
-            <ContainerPlacar>
-              <TextoPlacarPositivoNegativo>
-                {placarPositivo}
-              </TextoPlacarPositivoNegativo>
-              <TextoPlacarPositivoNegativo>
-                {placarNegativo}
-              </TextoPlacarPositivoNegativo>
-            </ContainerPlacar>
-
-            <ContainerButtonsTop>
-              <ButtonTop onPress={() => clicouCapitulo()}>
-                <TextoButtonTop>{txtCapitulo}</TextoButtonTop>
-              </ButtonTop>
-              <ButtonTop onPress={() => clicouAtividade()}>
-                <TextoButtonTop>{txtAtividade}</TextoButtonTop>
-              </ButtonTop>
-              {nextView && (
-                <ButtonTop>
-                  <TextoButtonTop>Next</TextoButtonTop>
-                </ButtonTop>
-              )}
-            </ContainerButtonsTop>
-          </ContainerMaosPlacarCapituloAtividade>
-
-          <ContainerTextoQuestoes>
-            <TextoQuestoes>{questoes[0].questao00}</TextoQuestoes>
-            <TextoQuestoes>{questoes[0].questao01}</TextoQuestoes>
-            <TextoQuestoes>{questoes[0].questao02}</TextoQuestoes>
-          </ContainerTextoQuestoes>
-
-          <ContainerAlternativa>
-            <ButtonAlternativa onPress={() => clicouAlternativa('a')}>
-              <TextoButtonAlternativa>A)</TextoButtonAlternativa>
-            </ButtonAlternativa>
-            <TextoAlternativa>{questoes[0].opcaoA} </TextoAlternativa>
-          </ContainerAlternativa>
-
-          <ContainerAlternativa>
-            <ButtonAlternativa onPress={() => clicouAlternativa('b')}>
-              <TextoButtonAlternativa>B)</TextoButtonAlternativa>
-            </ButtonAlternativa>
-            <TextoAlternativa>{questoes[0].opcaoB} </TextoAlternativa>
-          </ContainerAlternativa>
-
-          <ContainerAlternativa>
-            <ButtonAlternativa onPress={() => clicouAlternativa('c')}>
-              <TextoButtonAlternativa>C)</TextoButtonAlternativa>
-            </ButtonAlternativa>
-            <TextoAlternativa>{questoes[0].opcaoC} </TextoAlternativa>
-          </ContainerAlternativa>
-
-          <ContainerAlternativa>
-            <ButtonAlternativa onPress={() => clicouAlternativa('d')}>
-              <TextoButtonAlternativa>D)</TextoButtonAlternativa>
-            </ButtonAlternativa>
-            <TextoAlternativa>{questoes[0].opcaoD} </TextoAlternativa>
-          </ContainerAlternativa>
-        </ContainerApp1>
+      {!clickCapitulo && (
+        <ContainerAcertosErros>
+          {placar.map(value => (
+            <AcertosErrosOX key={value.id}>
+              <Text>
+                {value.placarAE < 0 ? '' : controler.acertoErro[value.placarAE]}
+              </Text>
+            </AcertosErrosOX>
+          ))}
+        </ContainerAcertosErros>
       )}
 
+      {!clickCapitulo && (
+        <ContainerMaosPlacarCapituloAtividade>
+          <ContainerMaos>
+            <LogoMaosPositivaNegativa source={iconPositivo} />
+            <LogoMaosPositivaNegativa source={iconNegativo} />
+          </ContainerMaos>
+
+          <ContainerPlacar>
+            <TextoPlacarPositivoNegativo>
+              {placarPositivo}
+            </TextoPlacarPositivoNegativo>
+            <TextoPlacarPositivoNegativo>
+              {placarNegativo}
+            </TextoPlacarPositivoNegativo>
+          </ContainerPlacar>
+
+          <ContainerButtonsTop>
+            <ButtonTop onPress={() => clicouCapitulo()}>
+              <TextoButtonTop>{txtCapitulo}</TextoButtonTop>
+            </ButtonTop>
+            <ButtonTop onPress={() => clicouAtividade()}>
+              <TextoButtonTop>{txtAtividade}</TextoButtonTop>
+            </ButtonTop>
+            {nextView && (
+              <ButtonTop>
+                <TextoButtonTop>Next</TextoButtonTop>
+              </ButtonTop>
+            )}
+          </ContainerButtonsTop>
+        </ContainerMaosPlacarCapituloAtividade>
+      )}
+
+      {!clickCapitulo && (
+        <ContainerTextoQuestoes>
+          <TextoQuestoes>{questoes[0].questao00}</TextoQuestoes>
+          <TextoQuestoes>{questoes[0].questao01}</TextoQuestoes>
+          <TextoQuestoes>{questoes[0].questao02}</TextoQuestoes>
+        </ContainerTextoQuestoes>
+      )}
+
+      {!clickCapitulo && (
+        <ContainerAlternativa>
+          <ButtonAlternativa onPress={() => clicouAlternativa('a')}>
+            <TextoButtonAlternativa>A)</TextoButtonAlternativa>
+          </ButtonAlternativa>
+          <TextoAlternativa>{questoes[0].opcaoA} </TextoAlternativa>
+        </ContainerAlternativa>
+      )}
+
+      {!clickCapitulo && (
+        <ContainerAlternativa>
+          <ButtonAlternativa onPress={() => clicouAlternativa('b')}>
+            <TextoButtonAlternativa>B)</TextoButtonAlternativa>
+          </ButtonAlternativa>
+          <TextoAlternativa>{questoes[0].opcaoB} </TextoAlternativa>
+        </ContainerAlternativa>
+      )}
+
+      {!clickCapitulo && (
+        <ContainerAlternativa>
+          <ButtonAlternativa onPress={() => clicouAlternativa('c')}>
+            <TextoButtonAlternativa>C)</TextoButtonAlternativa>
+          </ButtonAlternativa>
+          <TextoAlternativa>{questoes[0].opcaoC} </TextoAlternativa>
+        </ContainerAlternativa>
+      )}
+
+      {!clickCapitulo && (
+        <ContainerAlternativa>
+          <ButtonAlternativa onPress={() => clicouAlternativa('d')}>
+            <TextoButtonAlternativa>D)</TextoButtonAlternativa>
+          </ButtonAlternativa>
+          <TextoAlternativa>{questoes[0].opcaoD} </TextoAlternativa>
+        </ContainerAlternativa>
+      )}
       {clickCapitulo && (
         <FlatTestes
           data={listaCapitulos}
-          keyExtractor={lista => `${lista.key}`}
+          keyExtractor={cap => cap.key}
           renderItem={({ item }) => (
             <FlatTestesButton onPress={() => clicouListaCapitulos(item.key)}>
-              <FlatTestesItem>{item.name}</FlatTestesItem>
-            </FlatTestesButton>
-          )}
-        />
-      )}
-
-      {clickAtividade && (
-        <FlatTestes
-          data={listaAtividades}
-          keyExtractor={lista => `${lista.key}`}
-          renderItem={({ item }) => (
-            <FlatTestesButton onPress={() => clicouListaAtividades(item.key)}>
               <FlatTestesItem>{item.name}</FlatTestesItem>
             </FlatTestesButton>
           )}

@@ -3,6 +3,8 @@ import styled from 'styled-components/native';
 export const ContainerApp = styled.ScrollView`
   padding: 1px;
 `;
+export const ContainerApp1 = styled.View``;
+export const ContainerApp2 = styled.View``;
 export const ContainerAcertosErros = styled.View`
   flex-direction: row;
   padding: 1px;
@@ -66,7 +68,9 @@ export const ContainerAlternativa = styled.View`
   align-content: center;
   align-items: center;
 `;
-export const BotaoAlternativa = styled.Text`
+export const ButtonAlternativa = styled.TouchableOpacity``;
+
+export const TextoButtonAlternativa = styled.Text`
   background-color: #4fc3f7;
   width: 48px;
   height: 50px;
@@ -82,4 +86,18 @@ export const TextoAlternativa = styled.Text`
 `;
 export const BordaInferior = styled.View`
   margin-top: 80px;
+`;
+export const ListaCapAti = styled.FlatList``;
+
+export const FlatTestes = styled.FlatList`
+  padding: 22px;
+`;
+export const FlatTestesButton = styled.TouchableOpacity`
+  background-color: #009900;
+  margin: 5px;
+`;
+export const FlatTestesItem = styled.Text`
+  background-color: #4fc3f7;
+  font-size: 25px;
+  text-align: center;
 `;
