@@ -1,10 +1,7 @@
 function getListaCapitulos() {
   const ret = [];
-  ret.push({
-    key: 0,
-    name: `1. Tabuada Tabuada Tabuada Tabuada Tabuada Tabuada Tabuada x Tabuada`,
-  });
-  ret.push({ key: 1, name: `2. Tabuadas` });
+  ret.push({ key: 0, name: `1. Regra de Sinais` });
+  ret.push({ key: 1, name: `2. Regra` });
   ret.push({ key: 2, name: `3. Expressões` });
   ret.push({ key: 3, name: `4. Expressões` });
   ret.push({ key: 4, name: `5. Expressões` });
@@ -17,21 +14,28 @@ function getQtdeCapitulos() {
 
 function getListaAtividades(capitulo) {
   const ret = [];
+  const tmp = [];
   if (capitulo === 0) {
-    ret.push({ key: 0, name: `Adição do 2` });
-    ret.push({ key: 1, name: `Adição do 3` });
-    ret.push({ key: 2, name: `Adição do 4` });
+    tmp.push(`Adição e Subtração`);
+    tmp.push(`Parênteses com Adição e Subtração`);
+    tmp.push(`Multiplicação e Divisão`);
+    tmp.push(`Parênteses Multiplicação e Divisão`);
   }
   if (capitulo === 1) {
-    ret.push({ key: 0, name: `Adição do 2, 3 e 4` });
-    ret.push({ key: 1, name: `Adição do 3, 4 e 5` });
-    ret.push({ key: 2, name: `Adição do 4, 5 e 6` });
+    tmp.push(`Adição do 2, 3 e 4`);
+    tmp.push(`Adição do 3, 4 e 5`);
+    tmp.push(`Adição do 4, 5 e 6`);
   }
   if (capitulo === 2) {
-    ret.push({ key: 0, name: `Adição e Subtração 2, 3 e 4` });
-    ret.push({ key: 1, name: `Adição e Subtração do 3, 4 e 5` });
-    ret.push({ key: 2, name: `Adição e Subtração do 4, 5 e 6` });
+    tmp.push(`Adição e Subtração 2, 3 e 4`);
+    tmp.push(`Adição e Subtração do 3, 4 e 5`);
+    tmp.push(`Adição e Subtração do 4, 5 e 6`);
   }
+  for (let i = 0; i < tmp.length; i++) {
+    ret.push({ key: i, name: `${i + 1}. ${tmp[i]}` });
+  }
+  if (ret.length < 1) ret.push({ key: 0, name: `Não disponível` });
+
   return ret;
 }
 

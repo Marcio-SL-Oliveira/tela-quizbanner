@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Text } from 'react-native';
 
 import {
@@ -27,12 +27,10 @@ import {
   ContainerApp1,
 } from './styles';
 
-import getQuestao from '../../questoes/tabuada/tab00';
+import getQuestao from '../../atividades/extenso/00-cardinais';
 import {
   getListaCapitulos,
   getListaAtividades,
-  getQtdeCapitulos,
-  getQtdeAtividades,
 } from '../../capitulos/capitulos';
 // import Styles from './styles.js';
 // import { Container } from './styles';
@@ -40,7 +38,7 @@ import iconPositivo from '../../assets/iconpositivo.png';
 import iconNegativo from '../../assets/iconnegativo.png';
 
 export default function Main() {
-  const [placar, setPlacar] = useState([
+  const [placar] = useState([
     { id: 0, placarAE: -1 },
     { id: 1, placarAE: -1 },
     { id: 2, placarAE: -1 },
@@ -52,14 +50,7 @@ export default function Main() {
     { id: 8, placarAE: 1 },
     { id: 9, placarAE: -1 },
   ]);
-  const [controler, setControler] = useState({
-    id: 0,
-    index: 0,
-    acertoErro: ['X', 'O'],
-    buttonCap: false,
-    placarPositivo: 7,
-    placarNegativo: 3,
-  });
+  const [controler] = useState({ acertoErro: ['X', 'O'] });
   /* Busca Lista de Capítulos e Atividades
    Define Quantidade Máxima de Capítulos e Atividades,
    Define o Capítulo e Atividade Atual
@@ -67,26 +58,14 @@ export default function Main() {
   */
   const [mostraLista, setMostraLista] = useState(false);
   const [listaCapitulos] = useState(getListaCapitulos);
-  const [indexCapitulo, setIndexCapitulo] = useState(0);
-  const [maximoCapitulos, setMaximoCapitulos] = useState(getQtdeCapitulos);
   const [txtCapitulo, setTxtCapitulo] = useState('Cap. 1');
   const [clickCapitulo, setClickCapitulo] = useState(false);
 
   const [listaAtividades, setListaAtividades] = useState(getListaAtividades(0));
-  const [minhaAtividade, setMinhaAtividade] = useState(0);
-  const [maxAtividade, setMaxAtividade] = useState(getQtdeAtividades);
+
   const [questoes, setQuestoes] = useState(getQuestao);
-  const [meuIndex, setMeuIndex] = useState(0);
   const [clickAtividade, setClickAtividade] = useState(false);
   const [txtAtividade, setTxtAtividade] = useState('Ati. 1');
-  function clicouIndex(alternativa) {
-    setMeuIndex(3);
-    setControler(controler);
-  }
-  useEffect(() => {
-    console.log('useEffect index', controler.index);
-  }, [controler]);
-  const local = { index: 0, placarPositivo: 0, placarNegativo: 0 };
   const [index, setIndex] = useState(0);
   const [nextView, setNextView] = useState(false);
   const [placarPositivo, setPlacarPositivo] = useState(0);
@@ -117,25 +96,20 @@ export default function Main() {
     setMostraLista(false);
   }
 
-  function mudouCapitulo() {
-    setClickCapitulo(!clickCapitulo);
-    setNextView(true);
-  }
   function clicouAlternativa(alternativa) {
-    local.index = index + 1;
     if (alternativa === 'a') {
-      local.placarPositivo = placarPositivo + 1;
-      setPlacarPositivo(local.placarPositivo);
+      setPlacarPositivo(placarPositivo + 1);
     }
     if (alternativa === 'b') {
-      setPlacarPositivo(placarPositivo - 1);
+      setPlacarNegativo(placarNegativo + 1);
     }
     if (alternativa === 'c') {
       setPlacarNegativo(placarNegativo + 1);
     }
     if (alternativa === 'd') {
-      setPlacarNegativo(placarNegativo - 1);
+      setPlacarNegativo(placarNegativo + 1);
     }
+    setIndex(index >= 9 ? 0 : index + 1);
   }
 
   return (
@@ -185,37 +159,37 @@ export default function Main() {
           </ContainerMaosPlacarCapituloAtividade>
 
           <ContainerTextoQuestoes>
-            <TextoQuestoes>{questoes[0].questao00}</TextoQuestoes>
-            <TextoQuestoes>{questoes[0].questao01}</TextoQuestoes>
-            <TextoQuestoes>{questoes[0].questao02}</TextoQuestoes>
+            <TextoQuestoes>{questoes[index].questao00}</TextoQuestoes>
+            <TextoQuestoes>{questoes[index].questao01}</TextoQuestoes>
+            <TextoQuestoes>{questoes[index].questao02}</TextoQuestoes>
           </ContainerTextoQuestoes>
 
           <ContainerAlternativa>
             <ButtonAlternativa onPress={() => clicouAlternativa('a')}>
               <TextoButtonAlternativa>A)</TextoButtonAlternativa>
             </ButtonAlternativa>
-            <TextoAlternativa>{questoes[0].opcaoA} </TextoAlternativa>
+            <TextoAlternativa>{questoes[index].opcaoA} </TextoAlternativa>
           </ContainerAlternativa>
 
           <ContainerAlternativa>
             <ButtonAlternativa onPress={() => clicouAlternativa('b')}>
               <TextoButtonAlternativa>B)</TextoButtonAlternativa>
             </ButtonAlternativa>
-            <TextoAlternativa>{questoes[0].opcaoB} </TextoAlternativa>
+            <TextoAlternativa>{questoes[index].opcaoB} </TextoAlternativa>
           </ContainerAlternativa>
 
           <ContainerAlternativa>
             <ButtonAlternativa onPress={() => clicouAlternativa('c')}>
               <TextoButtonAlternativa>C)</TextoButtonAlternativa>
             </ButtonAlternativa>
-            <TextoAlternativa>{questoes[0].opcaoC} </TextoAlternativa>
+            <TextoAlternativa>{questoes[index].opcaoC} </TextoAlternativa>
           </ContainerAlternativa>
 
           <ContainerAlternativa>
             <ButtonAlternativa onPress={() => clicouAlternativa('d')}>
               <TextoButtonAlternativa>D)</TextoButtonAlternativa>
             </ButtonAlternativa>
-            <TextoAlternativa>{questoes[0].opcaoD} </TextoAlternativa>
+            <TextoAlternativa>{questoes[index].opcaoD} </TextoAlternativa>
           </ContainerAlternativa>
         </ContainerApp1>
       )}
