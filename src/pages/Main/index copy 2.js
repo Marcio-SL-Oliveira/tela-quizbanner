@@ -1,12 +1,9 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import React, { useState, useEffect } from 'react';
-import { Text } from 'react-native';
 
 import {
   ContainerApp,
   ContainerMaosPlacarCapituloAtividade,
-  ContainerAcertosErros,
-  AcertosErrosOX,
   ContainerMaos,
   LogoMaosPositivaNegativa,
   ContainerPlacar,
@@ -27,6 +24,7 @@ import {
   ContainerApp1,
 } from './styles';
 
+import { PlacarXO } from './placarXO';
 import iconPositivo from '../../assets/iconpositivo.png';
 import iconNegativo from '../../assets/iconnegativo.png';
 import {
@@ -37,15 +35,11 @@ import {
   setPrefIndexCapitulo,
   setPrefIndexAtividade,
 } from '../../config/preferencias';
-import { placarInicial, novoPlacar } from '../../utils/questoesEmBranco';
 
 import { obtemQuestao } from './obtemQuestao';
 
 export default function Main() {
   /*  */
-  const [placar, setPlacar] = useState(placarInicial());
-  const [controler] = useState({ acertoErro: ['X', 'O'] });
-
   const [listaCapitulos] = useState(getListaCapitulos);
   const [indexCapitulo, setIndexCapitulo] = useState(0);
   const [flagCarregouCapitulo, setFlagCarregouCapitulo] = useState(false);
@@ -87,12 +81,13 @@ export default function Main() {
   }, [indexAtividade]);
 
   const [index, setIndex] = useState(0);
-  const [nextView, setNextView] = useState(false);
+  const [nextView] = useState(false);
   const [placarPositivo, setPlacarPositivo] = useState(0);
   const [placarNegativo, setPlacarNegativo] = useState(0);
 
   function clicouCapitulo() {
     setClickCapitulo(!clickCapitulo);
+    // setNextView(true);
   }
 
   function clicouListaCapitulos(novoCapitulo) {
@@ -104,6 +99,7 @@ export default function Main() {
 
   function clicouAtividade() {
     setClickAtividade(!clickAtividade);
+    // setNextView(false);
   }
 
   function clicouListaAtividades(novaAtividade) {
@@ -112,27 +108,14 @@ export default function Main() {
     setPrefIndexAtividade(novaAtividade);
   }
 
-  function proximaQuestao() {
-    if (index >= 9) setPlacar(placarInicial());
-    setIndex(index >= 9 ? 0 : index + 1);
-  }
-
   function clicouAlternativa(alternativa) {
-    if (nextView) return;
+    console.log(index, questoes[index].opcaoV);
     if (alternativa === questoes[index].opcaoV) {
       setPlacarPositivo(placarPositivo + 1);
-      setPlacar(novoPlacar(placar, index, 1));
-      proximaQuestao();
     } else {
       setPlacarNegativo(placarNegativo + 1);
-      setPlacar(novoPlacar(placar, index, 0));
-      setNextView(true);
     }
-  }
-
-  function clicouNext() {
-    setNextView(false);
-    proximaQuestao();
+    setIndex(index >= 9 ? 0 : index + 1);
   }
 
   if (!flagCarregouCapitulo || !flagCarregouAtividade) {
@@ -178,15 +161,7 @@ export default function Main() {
   return (
     <ContainerApp>
       <ContainerApp1>
-        <ContainerAcertosErros>
-          {placar.map(value => (
-            <AcertosErrosOX key={value.id}>
-              <Text>
-                {value.placarAE < 0 ? '' : controler.acertoErro[value.placarAE]}
-              </Text>
-            </AcertosErrosOX>
-          ))}
-        </ContainerAcertosErros>
+        <PlacarXO x="a" />
         <ContainerMaosPlacarCapituloAtividade>
           <ContainerMaos>
             <LogoMaosPositivaNegativa source={iconPositivo} />
@@ -210,7 +185,7 @@ export default function Main() {
               <TextoButtonTop>{`Ati. ${indexAtividade}`}</TextoButtonTop>
             </ButtonTop>
             {nextView && (
-              <ButtonTop onPress={() => clicouNext()}>
+              <ButtonTop>
                 <TextoButtonTop>Next</TextoButtonTop>
               </ButtonTop>
             )}

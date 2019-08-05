@@ -1,12 +1,9 @@
 import AsyncStorage from '@react-native-community/async-storage';
 import React, { useState, useEffect } from 'react';
-import { Text } from 'react-native';
 
 import {
   ContainerApp,
   ContainerMaosPlacarCapituloAtividade,
-  ContainerAcertosErros,
-  AcertosErrosOX,
   ContainerMaos,
   LogoMaosPositivaNegativa,
   ContainerPlacar,
@@ -27,39 +24,23 @@ import {
   ContainerApp1,
 } from './styles';
 
+import { PlacarXO } from './placarXO';
 import iconPositivo from '../../assets/iconpositivo.png';
 import iconNegativo from '../../assets/iconnegativo.png';
 import {
   getListaCapitulos,
   getListaAtividades,
 } from '../../capitulos/capitulos';
-import {
-  setPrefIndexCapitulo,
-  setPrefIndexAtividade,
-} from '../../config/preferencias';
-import { placarInicial, novoPlacar } from '../../utils/questoesEmBranco';
+import { setPrefIndexCapitulo } from '../../config/preferencias';
 
-import { obtemQuestao } from './obtemQuestao';
+import getQuestao from '../../atividades/extenso/00-cardinais';
 
 export default function Main() {
   /*  */
-  const [placar, setPlacar] = useState(placarInicial());
-  const [controler] = useState({ acertoErro: ['X', 'O'] });
-
   const [listaCapitulos] = useState(getListaCapitulos);
   const [indexCapitulo, setIndexCapitulo] = useState(0);
   const [flagCarregouCapitulo, setFlagCarregouCapitulo] = useState(false);
-  const [clickCapitulo, setClickCapitulo] = useState(false);
-
-  const [listaAtividades, setListaAtividades] = useState(getListaAtividades(0));
-  const [indexAtividade, setIndexAtividade] = useState(0);
-  const [flagCarregouAtividade, setFlagCarregouAtividade] = useState(false);
-  const [clickAtividade, setClickAtividade] = useState(false);
-
-  const [questoes, setQuestao] = useState([]);
-
   // https://www.robinwieruch.de/react-hooks/
-  // 03.08.19 https://www.academind.com/learn/react/react-hooks-introduction/
   useEffect(() => {
     async function carregaCapitulo() {
       setFlagCarregouCapitulo(false);
@@ -68,24 +49,14 @@ export default function Main() {
       setFlagCarregouCapitulo(true);
     }
     carregaCapitulo();
+  }, []);
+  const [clickCapitulo, setClickCapitulo] = useState(false);
 
-    async function carregaAtividade() {
-      setFlagCarregouAtividade(false);
-      const result = await AsyncStorage.getItem('ATIVIDADE');
-      setIndexAtividade(parseInt(result, 10) + 1);
-      setFlagCarregouAtividade(true);
-    }
-    carregaAtividade();
+  const [listaAtividades, setListaAtividades] = useState(getListaAtividades(0));
+  const [txtAtividade, setTxtAtividade] = useState('Ati. 1');
+  const [clickAtividade, setClickAtividade] = useState(false);
 
-    async function carregaQuestoes() {
-      if (indexCapitulo !== 0 && indexAtividade !== 0) {
-        const xx = await obtemQuestao(indexCapitulo - 1, indexAtividade - 1);
-        setQuestao(xx);
-      }
-    }
-    carregaQuestoes();
-  }, [indexAtividade]);
-
+  const [questoes] = useState(getQuestao);
   const [index, setIndex] = useState(0);
   const [nextView, setNextView] = useState(false);
   const [placarPositivo, setPlacarPositivo] = useState(0);
@@ -93,6 +64,7 @@ export default function Main() {
 
   function clicouCapitulo() {
     setClickCapitulo(!clickCapitulo);
+    setNextView(true);
   }
 
   function clicouListaCapitulos(novoCapitulo) {
@@ -104,41 +76,33 @@ export default function Main() {
 
   function clicouAtividade() {
     setClickAtividade(!clickAtividade);
+    setNextView(false);
   }
 
-  function clicouListaAtividades(novaAtividade) {
-    setIndexAtividade(novaAtividade + 1);
+  async function clicouListaAtividades(novaAtividade) {
+    setTxtAtividade(`Xti. ${novaAtividade + 1}`);
     setClickAtividade(false);
-    setPrefIndexAtividade(novaAtividade);
-  }
-
-  function proximaQuestao() {
-    if (index >= 9) setPlacar(placarInicial());
-    setIndex(index >= 9 ? 0 : index + 1);
   }
 
   function clicouAlternativa(alternativa) {
-    if (nextView) return;
-    if (alternativa === questoes[index].opcaoV) {
+    if (alternativa === 'a') {
       setPlacarPositivo(placarPositivo + 1);
-      setPlacar(novoPlacar(placar, index, 1));
-      proximaQuestao();
-    } else {
-      setPlacarNegativo(placarNegativo + 1);
-      setPlacar(novoPlacar(placar, index, 0));
-      setNextView(true);
     }
+    if (alternativa === 'b') {
+      setPlacarNegativo(placarNegativo + 1);
+    }
+    if (alternativa === 'c') {
+      setPlacarNegativo(placarNegativo + 1);
+    }
+    if (alternativa === 'd') {
+      setPlacarNegativo(placarNegativo + 1);
+    }
+    setIndex(index >= 9 ? 0 : index + 1);
   }
-
-  function clicouNext() {
-    setNextView(false);
-    proximaQuestao();
-  }
-
-  if (!flagCarregouCapitulo || !flagCarregouAtividade) {
+  if (!flagCarregouCapitulo) {
     return (
       <ContainerApp>
-        <TextoQuestoes>CARREGANDO!</TextoQuestoes>
+        <TextoQuestoes>CARREGANDO X!</TextoQuestoes>
       </ContainerApp>
     );
   }
@@ -175,18 +139,11 @@ export default function Main() {
       </ContainerApp>
     );
   }
+
   return (
     <ContainerApp>
       <ContainerApp1>
-        <ContainerAcertosErros>
-          {placar.map(value => (
-            <AcertosErrosOX key={value.id}>
-              <Text>
-                {value.placarAE < 0 ? '' : controler.acertoErro[value.placarAE]}
-              </Text>
-            </AcertosErrosOX>
-          ))}
-        </ContainerAcertosErros>
+        <PlacarXO x="a" />
         <ContainerMaosPlacarCapituloAtividade>
           <ContainerMaos>
             <LogoMaosPositivaNegativa source={iconPositivo} />
@@ -204,13 +161,13 @@ export default function Main() {
 
           <ContainerButtonsTop>
             <ButtonTop onPress={() => clicouCapitulo()}>
-              <TextoButtonTop>{`Cap. ${indexCapitulo}`}</TextoButtonTop>
+              <TextoButtonTop>{`CapA. ${indexCapitulo}`}</TextoButtonTop>
             </ButtonTop>
             <ButtonTop onPress={() => clicouAtividade()}>
-              <TextoButtonTop>{`Ati. ${indexAtividade}`}</TextoButtonTop>
+              <TextoButtonTop>{txtAtividade}</TextoButtonTop>
             </ButtonTop>
             {nextView && (
-              <ButtonTop onPress={() => clicouNext()}>
+              <ButtonTop>
                 <TextoButtonTop>Next</TextoButtonTop>
               </ButtonTop>
             )}

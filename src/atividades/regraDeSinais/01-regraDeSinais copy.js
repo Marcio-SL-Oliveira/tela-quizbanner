@@ -1,5 +1,5 @@
 import { sorteiaUmNumero, sorteiaNumeros } from '../../utils/sorteio';
-import { questaoEmBranco } from '../../utils/questoesEmBranco';
+import questaoEmBranco from '../../utils/questoesEmBranco';
 import { tipo } from '../../utils/utils';
 import {
   sinalDoNumero,
@@ -17,31 +17,25 @@ export default function regraDeSinais(atividade = 0) {
   const s2 = sorteiaNumeros(vMin[mAtividade], vMax[mAtividade], 10);
   const sorteio = [s1, s2];
 
-  const sinais = [
-    [1, -1, 1],
-    [1, 1, 1],
-    [-1, 1, 1],
-    [-1, -1, 1],
-    [1, -1, -1],
-    [1, 1, -1],
-    [-1, 1, -1],
-    [-1, -1, -1],
-  ];
-  const maxSinal = sinais.length - 1;
+  const sinais = [[1, -1], [1, 1], [-1, 1], [-1, -1]];
+  const maxSinal = 3;
   let wSinal = sorteiaUmNumero(0, maxSinal);
+  let sinalOp;
 
   for (let i = 0; i < 10; i++) {
     wSinal = tipo(wSinal, 0, maxSinal);
+    sinalOp = i % 2 === 0 ? 1 : -1;
     sorteio[0][i] *= sinais[wSinal][0];
     if (mAtividade === 1) {
       // Adição e Subtração
       if (sorteio[0][i] === sorteio[1][i]) sorteio[1][i] += 1;
-      sorteio[1][i] *= sinais[wSinal][2] * sinais[wSinal][1];
+      sorteio[1][i] *= sinalOp * sinais[wSinal][1];
     }
+
     if (mAtividade === 2) {
       // Multiplicação e Divisão
       sorteio[1][i] *= sinais[wSinal][0] * sinais[wSinal][1];
-      if (sinais[wSinal][2] === -1) {
+      if (sinalOp === -1) {
         // Divisão
         sorteio[0][i] *= Math.abs(sorteio[1][i]);
         if (Math.abs(sorteio[0][i]) < Math.abs(sorteio[1][i])) {
@@ -51,17 +45,18 @@ export default function regraDeSinais(atividade = 0) {
         }
       }
     }
+
     ret[i].questao00 = 'Observe a operação de números inteiros:';
     ret[i].questao01 = `${sinalDoNumero(sorteio[0][i]) +
       Math.abs(sorteio[0][i])} ${sinalDaOperacao(
-      sinais[wSinal][2],
+      sinalOp,
       mAtividade
     )} (${sinalDoNumero(sorteio[1][i])}${Math.abs(sorteio[1][i])})`;
 
     ret[i].questao02 = 'O resultado é';
     const num = [sorteio[0][i], sorteio[1][i]];
-    f = sorteiaFalsosZ(num, sinais[wSinal][2], mAtividade);
+    f = sorteiaFalsosZ(num, sinalOp, mAtividade);
     [ret[i].opcaoA, ret[i].opcaoB, ret[i].opcaoC, ret[i].opcaoD] = f;
   }
-  return [0, ret];
+  return ret;
 }

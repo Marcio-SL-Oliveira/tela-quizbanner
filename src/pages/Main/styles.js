@@ -87,7 +87,6 @@ export const TextoAlternativa = styled.Text`
 export const BordaInferior = styled.View`
   margin-top: 80px;
 `;
-export const ListaCapAti = styled.FlatList``;
 
 export const FlatTestes = styled.FlatList`
   padding: 22px;

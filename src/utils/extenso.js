@@ -1,4 +1,4 @@
-function extensoCardinais(valor = 0, genero = 'o') {
+const extensoCardinais = (valor = 0, genero = 'o') => {
   let v = valor;
   let maisMil = '';
   if (v > 1000) {
@@ -65,8 +65,9 @@ function extensoCardinais(valor = 0, genero = 'o') {
     'mil',
   ];
   for (let i = 2; i < 10; i++) {
-    if (genero === 'a') c[i] += 'as';
-    else c[i] += 'os';
+    c[i] += genero === 'a' ? 'as' : 'os';
+    // if (genero === 'a') c[i] += 'as';
+    // else c[i] += 'os';
   }
   if (v < 1001 && v % 100 === 0) return maisMil + c[v / 100];
 
@@ -87,6 +88,6 @@ function extensoCardinais(valor = 0, genero = 'o') {
   // Centena, dezena e unidades
   r = (r - (r % 10)) / 10; // varia de 1 a 9
   return `${maisMil + txtC + d[r]} e ${n[ru]}`;
-}
+};
 
 export { extensoCardinais };

@@ -3,6 +3,8 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
+    "dev": "react-native run-android",
+    "clear": "react-native start --reset-cache",
     "start": "react-native start",
     "test": "jest",
     "lint": "eslint .",
